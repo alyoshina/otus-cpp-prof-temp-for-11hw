@@ -27,6 +27,7 @@ public:
                     , ba::detached);
     }
     
+    auto& getParserContext() { return data.getParserContext(); }
 private:
     tcp::socket socket;
     Data& data;
@@ -40,7 +41,7 @@ private:
             try {
                 co_await ba::async_read_until(socket, buffer, "\n", ba::use_awaitable);
                 input << std::string(ba::buffer_cast<const char*>(buffer.data()), buffer.size());
-                if (parser->parse()) {
+                if (co_await parser->parse(shared_from_this())) {
                     std::shared_ptr<ICmd> cmd = parser->getCmd();
                     std::string response;
                     if (co_await data.cmdExec(shared_from_this(), cmd)) {

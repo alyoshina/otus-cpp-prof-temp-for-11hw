@@ -29,21 +29,26 @@ int main(int argc, char **argv) {
     try {
         ba::thread_pool pool(2);
         ba::signal_set poolSignals{pool, SIGINT, SIGTERM};
-        poolSignals.async_wait([&](auto, auto) { pool.stop(); });
+        poolSignals.async_wait([&pool](auto, auto) { pool.stop(); });
 
         ba::io_context ioContext;
         ba::signal_set ioContextSignals{ioContext, SIGINT, SIGTERM};
-        ioContextSignals.async_wait([&](auto, auto) { ioContext.stop(); });
-
+        ioContextSignals.async_wait([&ioContext](auto, auto) { ioContext.stop(); });
         std::thread dataThread([&ioContext]() { ioContext.run(); });
+
+        ba::io_context parserIoContext;
+        ba::signal_set pIoContextSignals{parserIoContext, SIGINT, SIGTERM};
+        pIoContextSignals.async_wait([&parserIoContext](auto, auto) { parserIoContext.stop(); });
+        std::thread parserThread([&parserIoContext]() { parserIoContext.run(); });
 
         //start server
         {
-            Data data(ioContext);
+            Data data(ioContext, parserIoContext);
             Server s(pool, data);
             s.listen(vm["port"].as<unsigned short>());
             pool.join();
             dataThread.join();
+            parserThread.join();
         }
         return EXIT_SUCCESS;
     } catch (const std::exception& ex) {

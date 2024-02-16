@@ -10,7 +10,7 @@ project(${PRO_NAME} VERSION ${PROJECT_VERSION})
 configure_file(version.h.in version.h)
 find_package(Boost CONFIG COMPONENTS program_options REQUIRED)
 
-add_executable(${PRO_NAME} src/main.cpp src/parser.cpp src/data.cpp sqlite/sqlite3.c)
+add_executable(${PRO_NAME} src/main.cpp src/parser.cpp sqlite/sqlite3.c)
 
 #target_link_libraries(${PRO_NAME} async Boost::program_options)
 target_link_libraries(${PRO_NAME} Boost::program_options)
