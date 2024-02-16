@@ -34,6 +34,7 @@ jobs:
         with:
           submodules: true
       - run: sudo apt-get update -y && sudo apt-get install cmake libboost-dev libboost-program-options-dev -y
+      - run: apt show "libboost-dev"
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DCMAKE_C_COMPILER="/usr/bin/gcc-13" -DCMAKE_CXX_COMPILER="/usr/bin/g++-13"
       - run: cmake --build .
       - run: cmake --build . --target package
