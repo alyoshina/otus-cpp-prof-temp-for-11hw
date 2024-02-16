@@ -67,5 +67,4 @@ public:
 private:
     std::string name;
     sqlite3* db;
-    std::string result;
 };
