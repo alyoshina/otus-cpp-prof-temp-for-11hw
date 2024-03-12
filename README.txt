@@ -37,3 +37,4 @@ Examples:
     SYMMETRIC_DIFFERENCE
 
     TRUNCATE A
+    
